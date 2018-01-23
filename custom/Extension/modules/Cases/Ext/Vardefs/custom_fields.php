@@ -1,9 +1,9 @@
 <?php
+
 /**
  * @author Sandeepa Rajoriya <sandeepa.rajoriya@cars24.com>
  * @copyright (c) 2018, CARS24
  */
-
 $dictionary["Case"]["fields"]["issue_faced_by_c"] = array(
     'name' => 'issue_faced_by_c',
     'vname' => 'LBL_ISSUE_FACED_BY',
@@ -106,6 +106,12 @@ $dictionary["Case"]["fields"]["ragistered_mobile_c"] = array(
     'comment' => 'Registered Mobile Number',
     'audited' => TRUE,
     'required' => TRUE,
+    'inline_edit' => FALSE,
+    'merge_filter' => 'disabled',
+    'enable_range_search' => false,
+    'min' => false,
+    'max' => false,
+    'disable_num_format' => '1',
 );
 $dictionary["Case"]["fields"]["caller_name_c"] = array(
     'name' => 'caller_name_c',

@@ -1,0 +1,35 @@
+div.p_login .p_login_top a {
+/*    background-image: none,url(../../../../themes/SuiteP/images/p_login_logo.svg),url(../../../../themes/SuiteP/images/p_login_logo.png);
+    background-position: 0 -70px;*/
+background: url('../../../../themes/SuiteP/images/cars-logo.png') no-repeat 0 0 !important;
+    width: 174px !important;
+    height: 30px;
+}
+div.p_login .p_login_top{background-color: #CDC7CC !important;}
+.edit-view-row .label{display: flex;}
+.required{margin: 0; padding: 13px 0 0 0}
+select{width: 250px;}
+select.datetimecombo_time{width: 50%;}
+.datetimecombo_time_section > span{top:0px !important;}
+
+
+#case_tab {
+    list-style: none;
+}
+#case_tab li {
+    float: left;
+    padding: 8px 34px;
+    border: 1px solid #778591;
+    margin-right: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 0;
+    color: #1a1a1a;
+}
+#case_tab li.active {
+    background: #778591;
+    color: #fff;
+}
+textarea#resolution {
+    width: 120%;
+}

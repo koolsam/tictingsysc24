@@ -1,0 +1,18 @@
+#case_tab {
+    list-style: none;
+}
+#case_tab li {
+    float: left;
+    padding: 8px 34px;
+    border: 1px solid #778591;
+    margin-right: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 0;
+    color: #1a1a1a;
+}
+#case_tab li.active {
+    background: #778591;
+    color: #fff;
+}
+

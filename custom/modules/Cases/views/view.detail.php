@@ -23,7 +23,7 @@ class CasesViewDetail extends ViewDetail {
 <?php
 // JS;
         parent::display();
-        echo $javascript; //Printing the javascript
+        //echo $javascript; //Printing the javascript
     }
 
 }

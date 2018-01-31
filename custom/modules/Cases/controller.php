@@ -5,6 +5,7 @@ if (!defined('sugarEntry') || !sugarEntry)
 
 require_once('include/MVC/Controller/SugarController.php');
 require_once('custom/modules/Cases/CustomCase.php');
+
 //require_once('modules/Cases/CustomCase.php');
 
 class CasesController extends SugarController {
@@ -23,9 +24,8 @@ class CasesController extends SugarController {
                 $GLOBALS['FOCUS'] = $this->bean;
         }
     }
-    
-    public function action_get_kb_articles()
-    {
+
+    public function action_get_kb_articles() {
         global $mod_strings;
         global $app_list_strings;
         $search = trim($_POST['search']);
@@ -64,8 +64,7 @@ class CasesController extends SugarController {
         die();
     }
 
-    public function action_get_kb_article()
-    {
+    public function action_get_kb_article() {
         global $mod_strings;
 
         $article_id = $_POST['article'];
@@ -90,8 +89,7 @@ class CasesController extends SugarController {
      * @param string $question
      * @return bool
      */
-    private function IsNullOrEmptyString($question)
-    {
+    private function IsNullOrEmptyString($question) {
         return (!isset($question) || trim($question) === '');
     }
 
@@ -103,41 +101,63 @@ class CasesController extends SugarController {
       $this->bean->create_new_list_query();
       } */
 
+    function pre_save() {
+        
+        if (!empty($_POST['assigned_user_id']) && $_POST['assigned_user_id'] != $this->bean->assigned_user_id && $_POST['assigned_user_id'] != $GLOBALS['current_user']->id && empty($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])) {
+            $this->bean->notify_on_save = true;
+        }
+        $GLOBALS['log']->debug("SugarController:: performing pre_save.");
+        
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        
+        $sfh = new SugarFieldHandler();
+        
+        foreach ($this->bean->field_defs as $field => $properties) {
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $sf = $sfh->getSugarField(ucfirst($type), true);
+            if (isset($_POST[$field])) {
+                if (is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
+                    if (empty($_POST[$field][0])) {
+                        unset($_POST[$field][0]);
+                    }
+                    $_POST[$field] = encodeMultienumValue($_POST[$field]);
+                }
+                $this->bean->$field = $_POST[$field];
+            } else if (!empty($properties['isMultiSelect']) && !isset($_POST[$field]) && isset($_POST[$field . '_multiselect'])) {
+                $this->bean->$field = '';
+            }
+            if ($sf != null) {
+                $sf->save($this->bean, $_POST, $field, $properties);
+            }
+        }
+        
+        //Auto assign group for new cases 
+        if($this->bean->id == '') {
+            
+            $sql = "SELECT group_id FROM auto_assign_group_mapping WHERE field_value = '{$_POST['sub_category']}'";
+            $group_id = $GLOBALS['db']->getOne($sql);
+            $this->bean->group_id_c = $group_id;
+            
+        }
+        //End Auto assign group
+        
+        //Set Status change datetime
+        if($this->bean->status != $_POST['status']) {
+            $this->bean->status_change_datetime_c = date('Y-m-d H:i:s');
+        }
+        //End status change datetime set
+        
+        
 
-//    function pre_save() {
-//        if(!empty($_POST['assigned_user_id']) && $_POST['assigned_user_id'] != $this->bean->assigned_user_id && $_POST['assigned_user_id'] != $GLOBALS['current_user']->id && empty($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])){
-//			$this->bean->notify_on_save = true;
-//		}
-//		$GLOBALS['log']->debug("SugarController:: performing pre_save.");
-//        require_once('include/SugarFields/SugarFieldHandler.php');
-//        $sfh = new SugarFieldHandler();
-//		foreach($this->bean->field_defs as $field => $properties) {
-//			$type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-//		    $sf = $sfh->getSugarField(ucfirst($type), true);
-//			if(isset($_POST[$field])) {
-//				if(is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
-//					if(empty($_POST[$field][0])) {
-//						unset($_POST[$field][0]);
-//					}
-//					$_POST[$field] = encodeMultienumValue($_POST[$field]);
-//				}
-//				$this->bean->$field = $_POST[$field];
-//			} else if(!empty($properties['isMultiSelect']) && !isset($_POST[$field]) && isset($_POST[$field . '_multiselect'])) {
-//				$this->bean->$field = '';
-//			}
-//            if($sf != null){
-//                $sf->save($this->bean, $_POST, $field, $properties);
-//            }
-//		}
-//
-//		foreach($this->bean->relationship_fields as $field=>$link){
-//			if(!empty($_POST[$field])){
-//				$this->bean->$field = $_POST[$field];
-//			}
-//		}
-//		if(!$this->bean->ACLAccess('save') && (!isset($_POST['update_text']) || $_POST['update_text'] == '')){
-//			ACLController::displayNoAccess(true);
-//			sugar_cleanup(true);
-//		}
-//    }
+        foreach ($this->bean->relationship_fields as $field => $link) {
+            if (!empty($_POST[$field])) {
+                $this->bean->$field = $_POST[$field];
+            }
+        }
+        if (!$this->bean->ACLAccess('save') && (!isset($_POST['update_text']) || $_POST['update_text'] == '')) {
+            ACLController::displayNoAccess(true);
+            sugar_cleanup(true);
+        }
+    }
+
 }

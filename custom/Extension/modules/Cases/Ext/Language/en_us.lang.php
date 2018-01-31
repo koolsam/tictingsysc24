@@ -30,6 +30,7 @@ $mod_strings['LBL_CITY'] = 'City';
 $mod_strings['LBL_DEALER_REGION'] = 'Dealer Region';
 $mod_strings['LBL_HOLD_BACK_TYPE'] = 'Hold Back Type';
 $mod_strings['LBL_DEALER_ELIGIBLE'] = 'Dealer Eligible';
+$mod_strings['LBL_STATUS_CHANGE_DATETIME'] = 'Status Change On';
 
 
 

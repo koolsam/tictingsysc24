@@ -135,7 +135,8 @@ $dictionary["Case"]["fields"]["appointment_id_c"] = array(
     'comment' => 'Appointment Id',
     'disable_num_format' => true,
     'studio' => array('quickcreate' => false),
-    'inline_edit' => false,
+    'inline_edit' => false,    
+    'disable_num_format' => '1',
 );
 $dictionary["Case"]["fields"]["current_appt_datetime_c"] = array(
     'name' => 'current_appt_datetime_c',
@@ -205,6 +206,7 @@ $dictionary["Case"]["fields"]["dealer_id_c"] = array(
     'disable_num_format' => true,
     'studio' => array('quickcreate' => false),
     'inline_edit' => false,
+    'disable_num_format' => '1',
 );
 $dictionary["Case"]["fields"]["dealer_name_c"] = array(
     'name' => 'dealer_name_c',
@@ -246,11 +248,12 @@ $dictionary["Case"]["fields"]["dealer_spoc_no_c"] = array(
     'name' => 'dealer_spoc_no_c',
     'vname' => 'LBL_DEALER_SPOC_NO',
     'type' => 'int',
-    'type' => 'varchar',
+    'dbtype' => 'varchar',
     'len' => 12,
     'comment' => 'SPOC for dealer Mobile Number',
     'audited' => TRUE,
     'required' => TRUE,
+    'disable_num_format' => '1',
 );
 $dictionary["Case"]["fields"]["appointment_stage_c"] = array(
     'name' => 'appointment_stage_c',
@@ -280,11 +283,12 @@ $dictionary["Case"]["fields"]["caller_mobile_c"] = array(
     'name' => 'caller_mobile_c',
     'vname' => 'LBL_CALLER_MOBILE',
     'type' => 'int',
-    'type' => 'varchar',
+    'dbtype' => 'varchar',
     'len' => 12,
     'comment' => 'Mobile Number of Caller',
     'audited' => TRUE,
     'required' => TRUE,
+    'disable_num_format' => '1',
 );
 $dictionary["Case"]["fields"]["caller_city_c"] = array(
     'name' => 'caller_city_c',
@@ -393,7 +397,7 @@ $dictionary["Case"]["fields"]["hold_back_type_c"] = array(
     'inline_edit' => false,
     'audited' => true,
 );
-$dictionary["Case"]["fields"]["dealer_eligible"] = array(
+$dictionary["Case"]["fields"]["dealer_eligible_c"] = array(
     'name' => 'dealer_eligible_c',
     'vname' => 'LBL_DEALER_ELIGIBLE',
     'required' => true,
@@ -406,6 +410,22 @@ $dictionary["Case"]["fields"]["dealer_eligible"] = array(
     'inline_edit' => false,
     'audited' => true,
 );
+$dictionary["Case"]["fields"]["status_change_datetime_c"] = array(
+    'name' => 'status_change_datetime_c',
+    'vname' => 'LBL_STATUS_CHANGE_DATETIME',
+    'type' => 'datetimecombo',
+    'dbtype' => 'datetime',
+    'default_value' => '',
+    'comment' => 'Date and time for status change',
+    'mass_update' => false,
+    'enable_range_search' => FALSE,
+    'required' => false,
+    'reportable' => true,
+    'audited' => false,
+    'duplicate_merge' => false,
+    'importable' => 'true',
+);
 $dictionary["Case"]["fields"]["name"]["vname"] = "LBL_CUSTOMER_NAME";
 $dictionary["Case"]["fields"]["update_text"]["editor"] = "";
 $dictionary["Case"]["fields"]["description"]["editor"] = "";
+$dictionary["Case"]["fields"]["status"]["options"] = "case_status_list";

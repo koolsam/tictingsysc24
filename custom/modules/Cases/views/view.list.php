@@ -32,7 +32,8 @@ class CasesViewList extends ViewList {
         $this->processSearchForm();
 
         if(isset($_GET['listflt']) && $_GET['listflt'] == 'created') {
-            $this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' ELSE 1=1 END )";
+            $this->params['custom_where'] = " OR (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 ELSE 1=1 END )";
+            $this->where = "(CASE WHEN $current_user->is_admin != 1 THEN 0=1 ELSE 1=1 END )";
         } else {
             $this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.assigned_user_id = '" . $current_user->id . "' ELSE 1=1 END )";
         }
@@ -67,7 +68,9 @@ class CasesViewList extends ViewList {
                     YAHOO.util.Event.onDOMReady(function(){
                     
                         var tabact = "$tabdefClass";
-                        $('.listViewBody').before('<ul id="case_tab"><li id="list_default_tab" class="$tabdefClass">One</li><li id="list_created_tab" class="$tabcrtClass">Two</li></ul>');
+                        if($('#case_tab').length == 0) { 
+                            $('.listViewBody').before('<ul id="case_tab"><li id="list_default_tab" class="$tabdefClass">My Cases</li><li id="list_created_tab" class="$tabcrtClass">Created by Me</li></ul>');
+                        }
                                      
                         
                         $('#list_default_tab').on('click', function() {
@@ -83,10 +86,18 @@ class CasesViewList extends ViewList {
                                 $(this).addClass('active');
                                 window.location.href = "$baseUrl/index.php?module=Cases&action=index&return_module=Cases&return_action=DetailView&listflt=created";
                             }
-                        });      
+                        });
                     
-                    
-                    });
+                    });      
+                    function loading_spinner() {
+                        var _loadingBar;
+                        _loadingBar = new YAHOO.widget.Panel("wait", { width:"240px", fixedcenter:true, close:false, draggable:false, modal:true, visible:false, effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5} });
+
+                        _loadingBar.setHeader("Please Wait");
+                        _loadingBar.setBody("<img src=\"themes/SuiteP/images/loading.gif\"/>");
+                        _loadingBar.render(document.body);
+                        _loadingBar.show();
+                    }
                 </script>
 EOQ;
         parent::display();

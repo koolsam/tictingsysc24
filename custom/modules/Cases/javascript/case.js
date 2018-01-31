@@ -11,12 +11,15 @@ Case = {
      * @description Hide and blank all fields present in Array from case editview. 
      * 
      */
-    initHide: function (myfieldsArray) {
+    initHide: function (myfieldsArray, fldBlank) {
 
         var fieldsArrLen = myfieldsArray.length;
         for (var i = 0; i < fieldsArrLen; i++) {
-            $('#' + myfieldsArray[i]).val('').closest('.edit-view-row-item').hide();
+            $('#' + myfieldsArray[i]).closest('.edit-view-row-item').hide();
             removeFromValidate('EditView', myfieldsArray[i]);
+            if (fldBlank == true) {
+                $('#' + myfieldsArray[i]).val('');
+            }
         }
     },
     /**
@@ -44,7 +47,7 @@ Case = {
     },
     initIssueFacedChange: function (myfieldsArray, fieldobj) {
 
-        this.initHide(myfieldsArray);
+        this.initHide(myfieldsArray, true);
         var validateFieldArr = {};
         var fieldArr = {};
         var issFcdVal = $(fieldobj).val();
@@ -68,61 +71,62 @@ Case = {
     },
     initCategoryChange: function (catFieldObj) {
 
-        var showFieldArr = {};
-        var showValidateFieldArr = {};
-        var hideFieldArr = ['hold_back_type_c', 'car_won_date_c', 'contacted_customer_c', 'visit_date_c', 'appointment_id_c', , 'dealer_id_c', 'dealer_name_c', 'dealership_name_c', 'dealer_spoc_name_c', 'dealer_spoc_no_c', 'dealer_region_c', 'dealer_eligible'];
+        var showFieldObj = {};
+        var showValidateFieldObj = {};
+        var hideFieldArr = ['hold_back_type_c', 'car_won_date_c', 'contacted_customer_c', 'visit_date_c', 'appointment_id_c', , 'dealer_id_c', 'dealer_name_c', 'dealership_name_c', 'dealer_spoc_name_c', 'dealer_spoc_no_c', 'dealer_region_c', 'dealer_eligible_c'];
         var catVal = $(catFieldObj).val();
 
         switch (catVal) {
 
             case 'customer_visited':
 
-                showFieldArr = {visit_date_c: 'date'};
+                showFieldObj = {visit_date_c: 'date'};
 
                 break;
             case 'customer_pr_waiting_or_won':
 
-                showValidateFieldArr = {car_won_date_c: 'date'};
+                showValidateFieldObj = {car_won_date_c: 'date'};
 
                 break;
             case 'channel_partner_exisiting':
 
-                showValidateFieldArr = {dealer_id_c: 'int', dealer_name_c: 'varchar', dealership_name_c: 'varchar', dealer_spoc_name_c: 'varchar', dealer_spoc_no_c: 'int', appointment_id_c: 'int', dealer_region_c: 'varchar'};
+                showValidateFieldObj = {dealer_id_c: 'int', dealer_name_c: 'varchar', dealership_name_c: 'varchar', dealer_spoc_name_c: 'varchar', dealer_spoc_no_c: 'int', appointment_id_c: 'int', dealer_region_c: 'varchar'};
 
                 break;
         }
 
-        this.initHide(hideFieldArr);
-        this.initShow(showFieldArr, false);
-        this.initShow(showValidateFieldArr, true);
+        this.initHide(hideFieldArr, true);
+        this.initShow(showFieldObj, false);
+        this.initShow(showValidateFieldObj, true);
     },
-    initSubCategoryChange: function (subCatFieldArr) {
+    initSubCategoryChange: function (subCatFieldObj) {
 
-        var showFieldArr = {};
-        var showValidateFieldArr = {};
+        var showFieldObj = {};
+        var showValidateFieldObj = {};
         var hideFieldArr = ['visit_date_c', 'car_won_date_c', 'contacted_customer_c', 'hold_back_type_c', 'appointment_id_c'];
-        var subCatVal = $(subCatFieldArr).val();
+        var subCatVal = $(subCatFieldObj).val();
 
         switch (subCatVal) {
 
             case 'customer_pr_waiting_or_won_hold_back_amount_not_received':
 
-                showValidateFieldArr = {hold_back_type_c: 'varchar'};
+                showValidateFieldObj = {hold_back_type_c: 'varchar'};
 
                 break;
         }
-        this.initHide(hideFieldArr);
-        this.initShow(showFieldArr, false);
-        this.initShow(showValidateFieldArr, true);
+        this.initHide(hideFieldArr, true);
+        this.initShow(showFieldObj, false);
+        this.initShow(showValidateFieldObj, true);
     },
     initEditForm: function () {
 
         var issueFacedVal = $('#issue_faced_by_c').val();
         var catVal = $('#category').val();
         var subCatdVal = $('#sub_category').val();
+        var statusVal = $('#status').val();
         var hideFieldArr = [];
-        var showFieldArr = {};
-        var showValidateFieldArr = {};
+        var showFieldObj = {};
+        var showValidateFieldObj = {};
 
         switch (issueFacedVal) {
 
@@ -147,27 +151,27 @@ Case = {
 
             case 'customer_visited':
 
-                showFieldArr = {visit_date_c: 'date'};
+                showFieldObj = {visit_date_c: 'date'};
 
                 break;
             case 'customer_pr_waiting_or_won':
 
-                showValidateFieldArr = {car_won_date_c: 'date'};
+                showValidateFieldObj = {car_won_date_c: 'date'};
 
                 break;
             case 'channel_partner_exisiting':
 
-                showValidateFieldArr = {};
+                showValidateFieldObj = {};
 
                 break;
             case 'channel_partner_new':
 
-                showValidateFieldArr = {dealer_eligible: 'bool'};
+                showValidateFieldObj = {dealer_eligible: 'bool'};
 
                 break;
             default:
 
-                showValidateFieldArr = {};
+                showValidateFieldObj = {};
 
                 break;
         }
@@ -176,24 +180,212 @@ Case = {
 
             case 'customer_pr_waiting_or_won_hold_back_amount_not_received':
 
-                showValidateFieldArr = {hold_back_type_c: 'varchar'};
+                showValidateFieldObj = {hold_back_type_c: 'varchar'};
 
                 break;
             case 'channel_partner_exisiting_inspection_miss':
 
-                showValidateFieldArr = {inspection_miss_for_evaluator_c: 'bool', refund_amount_c: 'float'};
+                showValidateFieldObj = {inspection_miss_for_evaluator_c: 'bool', refund_amount_c: 'float'};
 
                 break;
             default:
 
-                showValidateFieldArr = {};
+                showValidateFieldObj = {};
+
+                break;
+        }
+
+        switch (statusVal) {
+
+            case 'resolved':
+
+                showValidateFieldObj = {resolution: 'varchar'};
+
+                break;
+            case 'reopen':
+            case 'Closed':
+
+                showValidateFieldObj = {resolution: 'varchar'};
+
+                break;
+            case 'new':
+            case 'assigned':
+            case 'awaiting_response':
+            case 'duplicate':
+
+                hideFieldArr.push('resolution');
+
+                break;
+            default:
+
+                showValidateFieldObj = {};
+
+                break;
+        }
+
+        this.initHide(hideFieldArr, true);
+        this.initShow(showFieldObj, false);
+        this.initShow(showValidateFieldObj, true);
+    },
+    initEditIssueFacedChange: function (myfieldsArray, fieldobj) {
+
+        this.initHide(myfieldsArray);
+        var validateFieldArr = {};
+        var fieldArr = {};
+        var issFcdVal = $(fieldobj).val();
+
+        switch (issFcdVal) {
+
+            case 'customer':
+
+                validateFieldArr = {appointment_id_c: 'int', caller_name_c: 'varchar', contacted_customer_c: 'bool'};
+                fieldArr = {current_appt_datetime_c_date: 'date', appointment_stage_c: 'varchar', appointment_status_c: 'varchar'};
+                break;
+            case 'channel_partner':
+
+                validateFieldArr = {caller_mobile_c: 'int', caller_name_c: 'varchar', caller_city_c: 'varchar', dealer_id_c: 'int', dealer_name_c: 'varchar', dealership_name_c: 'varchar', dealer_spoc_name_c: 'varchar', dealer_spoc_no_c: 'int', appointment_id_c: 'int', dealer_region_c: 'varchar'};
+
+                break;
+        }
+
+        this.initShow(fieldArr, false);
+        this.initShow(validateFieldArr, true);
+    },
+    initEditCategoryChange: function (catFieldObj) {
+
+        var showFieldObj = {};
+        var showValidateFieldObj = {};
+        var hideFieldArr = ['hold_back_type_c', 'car_won_date_c', 'contacted_customer_c', 'visit_date_c', 'appointment_id_c', , 'dealer_id_c', 'dealer_name_c', 'dealership_name_c', 'dealer_spoc_name_c', 'dealer_spoc_no_c', 'dealer_region_c', 'dealer_eligible'];
+        var catVal = $(catFieldObj).val();
+
+        switch (catVal) {
+
+            case 'customer_visited':
+
+                showFieldObj = {visit_date_c: 'date'};
+
+                break;
+            case 'customer_pr_waiting_or_won':
+
+                showValidateFieldObj = {car_won_date_c: 'date'};
+
+                break;
+            case 'channel_partner_exisiting':
+
+                showValidateFieldObj = {dealer_id_c: 'int', dealer_name_c: 'varchar', dealership_name_c: 'varchar', dealer_spoc_name_c: 'varchar', dealer_spoc_no_c: 'int', appointment_id_c: 'int', dealer_region_c: 'varchar'};
+
+                break;
+            case 'channel_partner_new':
+
+                showValidateFieldObj = {dealer_eligible: 'bool'};
 
                 break;
         }
 
         this.initHide(hideFieldArr);
-        this.initShow(showFieldArr, false);
-        this.initShow(showValidateFieldArr, true);
+        this.initShow(showFieldObj, false);
+        this.initShow(showValidateFieldObj, true);
+    },
+    initEditSubCategoryChange: function (subCatFieldObj) {
+
+        var showFieldObj = {};
+        var showValidateFieldObj = {};
+        var hideFieldArr = ['visit_date_c', 'car_won_date_c', 'contacted_customer_c', 'hold_back_type_c', 'appointment_id_c'];
+        var subCatVal = $(subCatFieldObj).val();
+
+        switch (subCatVal) {
+
+            case 'customer_pr_waiting_or_won_hold_back_amount_not_received':
+
+                showValidateFieldObj = {hold_back_type_c: 'varchar'};
+
+                break;
+            case 'channel_partner_exisiting_inspection_miss':
+
+                showValidateFieldObj = {inspection_miss_for_evaluator_c: 'bool', refund_amount_c: 'float'};
+
+                break;
+        }
+        this.initHide(hideFieldArr);
+        this.initShow(showFieldObj, false);
+        this.initShow(showValidateFieldObj, true);
+    },
+    initStatusChange: function (statusFieldObj) {
+
+        var showValidateFieldObj = {};
+        var hideFieldArr = [];
+        var statusVal = $(statusFieldObj).val();
+
+        switch (statusVal) {
+
+            case 'resolved':
+
+                showValidateFieldObj = {resolution: 'varchar'};
+
+                break;
+            case 'reopen':
+            case 'Closed':
+
+                showValidateFieldObj = {resolution: 'varchar'};
+
+                break;
+            case 'new':
+            case 'assigned':
+            case 'awaiting_response':
+            case 'duplicate':
+
+                hideFieldArr.push('resolution');
+
+                break;
+            default:
+
+                showValidateFieldObj = {};
+
+                break;
+        }
+        this.initHide(hideFieldArr, false);
+        this.initShow(showValidateFieldObj, true);
+    },
+    initDetailViewFieldsHide: function (myfieldsArray) {
+
+        var fieldsArrLen = myfieldsArray.length;
+        for (var i = 0; i < fieldsArrLen; i++) {
+            $('#' + myfieldsArray[i]).closest('.detail-view-row-item').remove();
+        }
+
+        $('.detail-view-row').each(function () {
+            if ($(this).find('div').length < 1) {
+                $(this).remove();
+            }
+        });
+    },
+    initDetailViewDisplay: function (issueFacedVal) {
+        
+        var hideFieldsArray = [];
+
+        switch (issueFacedVal) {
+
+            case 'customer':
+
+                hideFieldsArray = ["resolution", "caller_mobile_c", "caller_city_c", "visit_date_c", "car_won_date_c", "dealer_id_c", "dealer_name_c", "dealership_name_c", "dealer_spoc_name_c", "dealer_spoc_no_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "dealer_region_c", "hold_back_type_c", "dealer_eligible_c"];
+
+                break;
+
+            case 'channel_partner':
+
+                hideFieldsArray = ["resolution", "current_appt_datetime_c", "visit_date_c", "car_won_date_c", "contacted_customer_c", "appointment_stage_c", "appointment_status_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "hold_back_type_c"];
+
+                break;
+
+            case 'internal_team':
+
+                hideFieldsArray = ["resolution", "caller_name_c", "appointment_id_c", "caller_mobile_c", "caller_city_c", "current_appt_datetime_c", "visit_date_c", "car_won_date_c", "contacted_customer_c", "dealer_id_c", "dealer_name_c", "dealership_name_c", "dealer_spoc_name_c", "dealer_spoc_no_c", "appointment_stage_c", "appointment_status_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "dealer_region_c", "hold_back_type_c", "dealer_eligible_c"];
+
+                break;
+        }
+
+        this.initDetailViewFieldsHide(hideFieldsArray);
+
     },
 };
 

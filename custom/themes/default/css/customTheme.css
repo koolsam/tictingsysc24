@@ -9,7 +9,9 @@ div.p_login .p_login_top{background-color: #CDC7CC !important;}
 .edit-view-row .label{display: flex;}
 .required{margin: 0; padding: 13px 0 0 0}
 select{width: 250px;}
-select.datetimecombo_time{width: 50%;}
+/*select.datetimecombo_time{width: 50%;}*/
+#current_appt_datetime_c_meridiem,#current_appt_datetime_c_hours,#current_appt_datetime_c_minutes{width:35%;}
+#current_appt_datetime_c_hours,#current_appt_datetime_c_minutes{width:65px;padding: 0 0 0 10px;}
 .datetimecombo_time_section > span{top:0px !important;}
 
 
@@ -25,11 +27,13 @@ select.datetimecombo_time{width: 50%;}
     border-top-right-radius: 5px;
     border-bottom: 0;
     color: #1a1a1a;
+    cursor: pointer;
 }
 #case_tab li.active {
     background: #778591;
     color: #fff;
 }
-textarea#resolution {
+textarea#resolution,textarea#update_text {
     width: 120%;
 }
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.ui-draggable.ui-resizable{right: 67px !important; position:fixed !important;left:auto !important; }

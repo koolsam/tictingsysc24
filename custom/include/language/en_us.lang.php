@@ -109,3 +109,13 @@ $GLOBALS['app_list_strings']['dom_int_bool']=array (
   1 => 'Yes',
   0 => 'No',
 );
+
+$GLOBALS['app_list_strings']['case_status_list']=array (
+  'new' => 'New',
+  'assigned' => 'Assigned',
+  'resolved' => 'Resolved',
+  'awaiting_response' => 'Awaiting Response',
+  'duplicate' => 'Duplicate',
+  'closed' => 'Closed',
+  'reopen' => 'Reopen',
+);

@@ -61,7 +61,7 @@ class CasesViewEdit extends ViewEdit {
 
     function display() {
         parent::display();
-        global $sugar_config;
+        global $sugar_config, $current_user;
         $new = empty($this->bean->id);
         if ($new) {
             ?>
@@ -69,8 +69,12 @@ class CasesViewEdit extends ViewEdit {
                 $(document).ready(function () {
 
 
-                    var myfieldsArray = ["resolution", "caller_name_c", "appointment_id_c", "caller_mobile_c", "caller_city_c", "current_appt_datetime_c_date", "visit_date_c", "car_won_date_c", "contacted_customer_c", "dealer_id_c", "dealer_name_c", "dealership_name_c", "dealer_spoc_name_c", "dealer_spoc_no_c", "appointment_stage_c", "appointment_status_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "dealer_region_c", "hold_back_type_c", "dealer_eligible"];
-                    Case.initHide(myfieldsArray);
+                    var hideFieldsArray = ["resolution", "caller_name_c", "appointment_id_c", "caller_mobile_c", "caller_city_c", "current_appt_datetime_c_date", "visit_date_c", "car_won_date_c", "contacted_customer_c", "dealer_id_c", "dealer_name_c", "dealership_name_c", "dealer_spoc_name_c", "dealer_spoc_no_c", "appointment_stage_c", "appointment_status_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "dealer_region_c", "hold_back_type_c", "dealer_eligible_c"];
+                    
+                    var hideFieldsArrayNotBlank = ["status"];
+                    
+                    Case.initHide(hideFieldsArray, true);
+                    Case.initHide(hideFieldsArrayNotBlank, false);
 
                     $('#update_text').closest('.edit-view-row-item').html('');
                     $('#update_text_label').closest('.edit-view-row-item').html('');
@@ -81,7 +85,7 @@ class CasesViewEdit extends ViewEdit {
 
 
                     $('#issue_faced_by_c').on('change', function () {
-                        Case.initIssueFacedChange(myfieldsArray, $(this));
+                        Case.initIssueFacedChange(hideFieldsArray, $(this));
                     });
 
                     $('#category').on('change', function () {
@@ -101,10 +105,41 @@ class CasesViewEdit extends ViewEdit {
             <?php
 
         } else {
+            
             ?>
             <script>
                 $(document).ready(function () {
                     Case.initEditForm();
+                    
+                    $('#issue_faced_by_c').on('change', function () {
+                        Case.initEditIssueFacedChange(myfieldsArray, $(this));
+                    });
+                    
+                    $('#category').on('change', function () {
+                        if ($(this).val() != '') {
+                            Case.initEditCategoryChange($(this));
+                        }
+                    });
+
+                    $('#sub_category').on('change', function () {
+                        if ($(this).val() != '') {
+                            Case.initEditSubCategoryChange($(this));
+                        }
+                    });
+
+                    $('#status').on('change', function () {
+                        if ($(this).val() != '') {
+                            Case.initStatusChange($(this));
+                        }
+                    });
+                    <?php
+                        if($current_user->id != $this->bean->created_by) {
+                    ?>
+                            $("#status option[value='closed']").remove();
+                            $("#status option[value='reopen']").remove();
+                    <?php
+                        }
+                    ?>
                 });
             </script>
             <?php

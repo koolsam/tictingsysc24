@@ -1,55 +1,18 @@
 <?php
-/**
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2016 SalesAgility Ltd.
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for  technical reasons, the Appropriate Legal Notices must
- * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
- */
+
 /**
  * Class CaseUpdatesHook
  */
 require_once 'modules/AOP_Case_Updates/CaseUpdatesHook.php';
 
 class CustomCaseUpdatesHook extends CaseUpdatesHook {
-    
+
     private $slug_size = 50;
 
     /**
      * @return string
      */
-    private function getAssignToUser()
-    {
+    private function getAssignToUser() {
         require_once 'modules/AOP_Case_Updates/AOPAssignManager.php';
         $assignManager = new AOPAssignManager();
 
@@ -59,8 +22,7 @@ class CustomCaseUpdatesHook extends CaseUpdatesHook {
     /**
      * @return int
      */
-    private function arrangeFilesArray()
-    {
+    private function arrangeFilesArray() {
         $count = 0;
         foreach ($_FILES['case_update_file'] as $key => $vals) {
             foreach ($vals as $index => $val) {
@@ -78,8 +40,7 @@ class CustomCaseUpdatesHook extends CaseUpdatesHook {
     /**
      * @param aCase $case
      */
-    public function saveUpdate($case)
-    {
+    public function saveUpdate($case) {
         if (!isAOPEnabled()) {
             return;
         }
@@ -160,15 +121,63 @@ class CustomCaseUpdatesHook extends CaseUpdatesHook {
             copy($srcFile, $destFile);
         }
     }
-    
+
     private function newNote($caseUpdateId) {
-        
+
         $note = BeanFactory::newBean('Notes');
         $note->parent_type = 'AOP_Case_Updates';
         $note->parent_id = $caseUpdateId;
         $note->not_use_rel_in_req = true;
 
         return $note;
+    }
+
+    public function notifyForCaseUpdatesThread($bean, $event, $arguments) {
+
+        global $current_user, $sugar_config;
+        require_once('modules/EmailTemplates/EmailTemplate.php');
+        
+        $template_name = 'Update Thread Email';
+
+        $primary_email = array($current_user->email1);
+        
+        $template = new EmailTemplate();
+        $template->retrieve_by_string_fields(array('name' => $template_name, 'type' => 'email'));
+        
+        if (isset($template->body_html) && $template->body_html != '') {
+
+            if (!empty($bean->id) && !empty($bean->case_id) && $bean->case_id != '' && $bean->id != '') {
+
+                $caseObj = BeanFactory::getBean("Cases", $bean->case_id);
+                                
+                $mailArr['created_by'] = $caseObj->created_by;
+                
+                $group_member_list = getGroupMembers($caseObj->group_id_c);
+                
+                foreach ($group_members as $member) {
+                    $role_obj = new ACLRole();
+                    $role_arr = $role_obj->getUserRoles($member['id']);
+
+                    if (!in_array('Manager', $role_arr)) {
+                        $user = BeanFactory::getBean('Users', $member['id']);
+                        $primary_email[] = $user->emailAddress->getPrimaryAddress($user);
+                    }
+                }
+                
+                if (count($primary_email) > 0) {
+                    
+                    $template->subject = str_replace('$current_user_name', $current_user->full_name, $template->subject);
+                    $template->body_html = str_replace('$current_user_name', $current_user->full_name, $template->body_html);
+
+                    $template->subject = $template->parse_template_bean($template->subject, $caseObj->module_dir, $caseObj);
+
+                    $template->body_html = $template->parse_template_bean($template->body_html, $caseObj->module_dir, $caseObj);
+                    $template->body_html = $template->parse_template_bean($template->body_html, $bean->module_dir, $bean);
+
+                    $mailSend = sendEmail($primary_email, $template->subject, $template->body_html, $template->body, $caseObj);
+                }
+            }
+        }
     }
 
 }

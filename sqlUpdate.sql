@@ -15,3 +15,4 @@ ALTER TABLE cases   add COLUMN hold_back_type_c varchar(100)  NULL ;
 ALTER TABLE cases   add COLUMN dealer_eligible_c varchar(100)  NULL ;
 ALTER TABLE cases   add COLUMN status_change_datetime_c datetime  NULL ;
 CREATE TABLE `auto_assign_group_mapping` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `field_value` VARCHAR(200) NOT NULL , `group_id` VARCHAR(50) NOT NULL , `status` TINYINT(1) NOT NULL  DEFAULT '1', `created_on` DATETIME NOT NULL , `updated_on` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`), UNIQUE `field_value` (`field_value`)) ENGINE = InnoDB;
+ALTER TABLE `auto_assign_group_mapping` ADD `group_name` VARCHAR(150) NOT NULL AFTER `group_id`;

@@ -7,6 +7,7 @@ class CasesViewList extends ViewList {
 
     function __construct() {
         parent::__construct();
+        
     }
 
     /**
@@ -30,10 +31,15 @@ class CasesViewList extends ViewList {
         global $current_user;
 
         $this->processSearchForm();
-
-        if(isset($_GET['listflt']) && $_GET['listflt'] == 'created') {
-            $this->params['custom_where'] = " OR (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 ELSE 1=1 END )";
-            $this->where = "(CASE WHEN $current_user->is_admin != 1 THEN 0=1 ELSE 1=1 END )";
+        
+        if(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'created') {
+            //$this->params['custom_where'] = " OR (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 ELSE 1=1 END )";
+            $this->params['custom_where'] = " OR ( cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 )";
+            $this->where = "(0=1)";
+            //$this->where = "(CASE WHEN $current_user->is_admin != 1 THEN 0=1 ELSE 1=1 END )";
+            $this->tabdefClass = '';
+            $this->tabCrtClass = 'active';
+            
         } else {
             $this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.assigned_user_id = '" . $current_user->id . "' ELSE 1=1 END )";
         }
@@ -54,11 +60,21 @@ class CasesViewList extends ViewList {
         
         global $sugar_config;
         $baseUrl = $sugar_config['site_url'];
-
         $tabdefClass = '';
         $tabcrtClass = '';
-        if(isset($_GET['listflt']) && $_GET['listflt'] == 'created') {
+        
+                
+        if(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'created') {
             $tabcrtClass = 'active';
+        } else if (isset($_REQUEST['current_query_by_page'])) {
+            $formated_str = str_replace('&quot;', '"', $_REQUEST['current_query_by_page']);
+            $current_query_by_page = json_decode($formated_str);
+            if(isset($current_query_by_page->listflt) && $current_query_by_page->listflt == 'created') {
+                $tabcrtClass = 'active';
+            } else {
+                $tabdefClass = 'active';
+            }
+        
         } else {
             $tabdefClass = 'active';
         }

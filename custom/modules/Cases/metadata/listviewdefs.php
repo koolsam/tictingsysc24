@@ -61,10 +61,12 @@ $listViewDefs['Cases'] = array(
         'default' => true,
         'ACLTag' => 'USER',
         'related_fields' => array('user_id')),
-	'PRIORITY' => array(
-		'width' => '10', 
-		'label' => 'LBL_LIST_PRIORITY',
-        'default' => true),  
+	'group_name_c' => array(
+            'width' => '20', 
+            'label' => 'LBL_GROUP_NAME', 
+            'link' => true,
+            'default' => true,
+        ),  
 	'STATUS' => array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_STATUS',

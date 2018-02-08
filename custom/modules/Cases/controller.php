@@ -104,7 +104,7 @@ class CasesController extends SugarController {
     function pre_save() {
         
         if (!empty($_POST['assigned_user_id']) && $_POST['assigned_user_id'] != $this->bean->assigned_user_id && $_POST['assigned_user_id'] != $GLOBALS['current_user']->id && empty($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])) {
-            $this->bean->notify_on_save = true;
+            $this->bean->notify_on_save = FALSE;
         }
         $GLOBALS['log']->debug("SugarController:: performing pre_save.");
         
@@ -134,9 +134,11 @@ class CasesController extends SugarController {
         //Auto assign group for new cases 
         if($this->bean->id == '') {
             
-            $sql = "SELECT group_id FROM auto_assign_group_mapping WHERE field_value = '{$_POST['sub_category']}'";
-            $group_id = $GLOBALS['db']->getOne($sql);
-            $this->bean->group_id_c = $group_id;
+            $sql = "SELECT group_id, group_name FROM auto_assign_group_mapping WHERE field_value = '{$_POST['sub_category']}'";
+            $result = $GLOBALS['db']->query($sql);
+            $group_info = $GLOBALS['db']->fetchByAssoc($result);
+            $this->bean->group_id_c = $group_info['group_id'];
+            $this->bean->group_name_c = $group_info['group_name'];
             
         }
         //End Auto assign group

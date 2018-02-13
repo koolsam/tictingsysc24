@@ -566,6 +566,8 @@ class EmailTemplate extends SugarBean
         $contact = new Contact();
         $lead = new Lead();
         $prospect = new Prospect();
+        
+        $repl_arr['site_url'] = $GLOBALS['sugar_config']['site_url'];
 
         foreach ($lead->field_defs as $field_def) {
             if (($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {

@@ -134,9 +134,12 @@ class CasesViewEdit extends ViewEdit {
                     });
                     <?php
                         if($current_user->id != $this->bean->created_by) {
+                            if($this->bean->status != 'closed') {
                     ?>
-                            $("#status option[value='closed']").remove();
-                            $("#status option[value='reopen']").remove();
+                                $("#status option[value='closed']").remove();
+                            <?php } if($this->bean->status != 'reopen') {?>
+                                $("#status option[value='reopen']").remove();
+                            <?php } ?>
                     <?php
                         }
                     ?>

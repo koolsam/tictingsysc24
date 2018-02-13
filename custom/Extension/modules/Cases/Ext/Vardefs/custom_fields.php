@@ -43,12 +43,22 @@ $dictionary["Case"]["fields"]['sub_category'] = array(
     'audited' => true,
     'comment' => 'Ticket Sub category',
 );
+$dictionary["Case"]["fields"]["securitygroups"] = array(
+    'name' => 'securitygroups',
+    'type' => 'link',
+    'relationship' => 'securitygroups_cases',
+    'link_type' => 'one',
+    'side' => 'right',
+    'source' => 'non-db',
+    'vname' => 'LBL_GROUP_NAME',
+);
 $dictionary["Case"]["fields"]["group_name_c"] = array(
     'name' => 'group_name_c',
     'rname' => 'name', //which points to the field name in the related module record
     'id_name' => 'group_id_c',
     'vname' => 'LBL_GROUP_NAME',
     'type' => 'relate',
+    'relationship' => 'securitygroups_cases',
     'link' => 'securitygroups', //which is the link field in the Contacts vardef which specifies this relationship
     'table' => 'securitygroups',
     'join_name' => 'securitygroups',
@@ -67,6 +77,7 @@ $dictionary["Case"]["fields"]["group_name_c"] = array(
 $dictionary["Case"]["fields"]["group_id_c"] = array(
     'name' => 'group_id_c',
     'type' => 'relate',
+    'relationship' => 'securitygroups_cases',
     'dbType' => 'id',
     'rname' => 'id',
     'module' => 'SecurityGroups',
@@ -77,15 +88,6 @@ $dictionary["Case"]["fields"]["group_id_c"] = array(
     'massupdate' => true,
     'inline_edit' => false,
     'comment' => 'The group to which the case is associated'
-);
-$dictionary["Case"]["fields"]["securitygroups"] = array(
-    'name' => 'securitygroups',
-    'type' => 'link',
-    'relationship' => 'securitygroups_cases',
-    'link_type' => 'one',
-    'side' => 'right',
-    'source' => 'non-db',
-    'vname' => 'LBL_GROUP_NAME',
 );
 $dictionary["Case"]["fields"]["ragistered_email_c"] = array(
     'name' => 'ragistered_email_c',

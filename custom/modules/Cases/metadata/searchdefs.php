@@ -49,7 +49,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      1 => 
+      1 =>  
+      array (
+        'name' => 'appointment_id_c',
+        'default' => false,
+        'width' => '10%',
+      ),
+      3 => 
       array (
         'name' => 'current_user_only',
         'label' => 'LBL_CURRENT_USER_FILTER',

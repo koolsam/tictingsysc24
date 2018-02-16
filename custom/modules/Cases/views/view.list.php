@@ -32,18 +32,23 @@ class CasesViewList extends ViewList {
 
         $this->processSearchForm();
         
-        if(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'created') {
-            //$this->params['custom_where'] = " OR (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 ELSE 1=1 END )";
-            $this->params['custom_where'] = " OR ( cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 )";
-            $this->where = "(0=1)";
-            //$this->where = "(CASE WHEN $current_user->is_admin != 1 THEN 0=1 ELSE 1=1 END )";
-            $this->tabdefClass = '';
-            $this->tabCrtClass = 'active';
-            
-        } else {
-            $this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.assigned_user_id = '" . $current_user->id . "' ELSE 1=1 END )";
+        $where = '';
+        if(!empty($this->where)) {
+            $where = "AND $this->where";
         }
-        //$this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' OR cases.assigned_user_id = '" . $current_user->id . "' ELSE 1=1 END )";
+        
+        
+        if(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'created') {
+            
+            $this->params['custom_where'] = " AND ( cases.created_by = '" . $current_user->id . "' AND cases.deleted = 0 $where)";
+            
+        } elseif(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'assigned') {
+            
+            $this->params['custom_where'] = " AND ( cases.assigned_user_id = '" . $current_user->id . "' AND cases.deleted = 0 $where)";
+        } else {
+            $this->params['custom_where'] = " AND (CASE WHEN $current_user->is_admin != 1 THEN cases.created_by = '" . $current_user->id . "' OR cases.assigned_user_id = '" . $current_user->id . "' OR cases.assigned_user_id = '' ELSE 1=1 END )";
+        }
+        
 
         $this->lv->searchColumns = $this->searchForm->searchColumns;
         if (!$this->headers)
@@ -62,15 +67,23 @@ class CasesViewList extends ViewList {
         $baseUrl = $sugar_config['site_url'];
         $tabdefClass = '';
         $tabcrtClass = '';
+        $tabasdClass = '';
+        $listflt = (isset($_REQUEST['listflt']))? $_REQUEST['listflt'] : '';
         
                 
-        if(isset($_REQUEST['listflt']) && $_REQUEST['listflt'] == 'created') {
+        if($listflt == 'created') {
             $tabcrtClass = 'active';
-        } else if (isset($_REQUEST['current_query_by_page'])) {
+        } else if($listflt == 'assigned') { 
+            $tabasdClass = 'active';
+        }else if (isset($_REQUEST['current_query_by_page'])) {
             $formated_str = str_replace('&quot;', '"', $_REQUEST['current_query_by_page']);
             $current_query_by_page = json_decode($formated_str);
             if(isset($current_query_by_page->listflt) && $current_query_by_page->listflt == 'created') {
+                $listflt = $current_query_by_page->listflt;
                 $tabcrtClass = 'active';
+            } else if(isset($current_query_by_page->listflt) && $current_query_by_page->listflt == 'assigned') {
+                $listflt = $current_query_by_page->listflt;
+                $tabasdClass = 'active';
             } else {
                 $tabdefClass = 'active';
             }
@@ -83,24 +96,48 @@ class CasesViewList extends ViewList {
                 <script language='javascript'>
                     YAHOO.util.Event.onDOMReady(function(){
                     
-                        var tabact = "$tabdefClass";
+                        var tabdefact = "$tabdefClass";
+                        var tabcrtact = "$tabcrtClass";
+                        var tabasdact = "$tabasdClass";
+                        
+//                        $('#listflt').remove();
+//                
+//                        $("<input>").attr({
+//                            type: "text",
+//                            id: "listflter",
+//                            name: "listflter",
+//                            value: "$listflt",
+//                            style: "display:none"
+//                        }).appendTo("#search_form");
+                        
+                
                         if($('#case_tab').length == 0) { 
-                            $('.listViewBody').before('<ul id="case_tab"><li id="list_default_tab" class="$tabdefClass">My Cases</li><li id="list_created_tab" class="$tabcrtClass">Created by Me</li></ul>');
+                            $('.listViewBody').before('<ul id="case_tab"><li id="list_default_tab" class="$tabdefClass">My Cases</li><li id="list_created_tab" class="$tabcrtClass">Created by Me</li><li id="list_assigned_tab" class="$tabasdClass">Assigned to Me</li></ul>');
                         }
                                      
                         
                         $('#list_default_tab').on('click', function() {
-                            if(tabact == '') {
+                            if(tabdefact == '') {
                                 $(this).addClass('active');
                                 $('#list_created_tab').removeClass('active');
+                                $('#list_assigned_tab').removeClass('active');
                                 window.location.href = "$baseUrl/index.php?module=Cases&action=index&return_module=Cases&return_action=DetailView";
                             }
                         });      
                         $('#list_created_tab').on('click', function() {
-                            if(tabact != '') {
+                            if(tabcrtact == '') {
                                 $('#list_default_tab').removeClass('active');
+                                $('#list_assigned_tab').removeClass('active');
                                 $(this).addClass('active');
                                 window.location.href = "$baseUrl/index.php?module=Cases&action=index&return_module=Cases&return_action=DetailView&listflt=created";
+                            }
+                        });
+                        $('#list_assigned_tab').on('click', function() {
+                            if(tabasdact == '') {
+                                $('#list_default_tab').removeClass('active');
+                                $('#list_created_tab').removeClass('active');
+                                $(this).addClass('active');
+                                window.location.href = "$baseUrl/index.php?module=Cases&action=index&return_module=Cases&return_action=DetailView&listflt=assigned";
                             }
                         });
                     

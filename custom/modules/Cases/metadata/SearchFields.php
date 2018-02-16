@@ -56,12 +56,9 @@ $searchFields['Cases'] = array (
     'operator' => 'not in',
     'closed_values' => 
     array (
-      0 => 'Closed',
-      1 => 'Rejected',
-      2 => 'Duplicate',
-      3 => 'Closed_Closed',
-      4 => 'Closed_Rejected',
-      5 => 'Closed_Duplicate',
+      0 => 'closed',
+      1 => 'resolved',
+      2 => 'duplicate',
     ),
     'type' => 'bool',
   ),

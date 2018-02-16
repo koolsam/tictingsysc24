@@ -20,10 +20,10 @@ class DailyReminder {
     }
             
     function sendReminderEmail($bean, $template_name) {
-        global $current_user;
+        
         require_once('modules/EmailTemplates/EmailTemplate.php');
 
-        $primary_email = array($current_user->email1);
+        $primary_email = array();
 
         if ($template_name != '') {
             $template = new EmailTemplate();

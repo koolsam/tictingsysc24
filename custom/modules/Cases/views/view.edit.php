@@ -111,6 +111,8 @@ class CasesViewEdit extends ViewEdit {
                 $(document).ready(function () {
                     Case.initEditForm();
                     
+                    var myfieldsArray = ["resolution", "caller_name_c", "appointment_id_c", "caller_mobile_c", "caller_city_c", "current_appt_datetime_c_date", "visit_date_c", "car_won_date_c", "contacted_customer_c", "dealer_id_c", "dealer_name_c", "dealership_name_c", "dealer_spoc_name_c", "dealer_spoc_no_c", "appointment_stage_c", "appointment_status_c", "contacted_channel_partner_c", "inspection_miss_for_evaluator_c", "refund_amount_c", "group_name_c", "assigned_user_name", "priority", "dealer_region_c", "hold_back_type_c", "dealer_eligible_c", "assigned_user_id"];
+                    
                     $('#issue_faced_by_c').on('change', function () {
                         Case.initEditIssueFacedChange(myfieldsArray, $(this));
                     });

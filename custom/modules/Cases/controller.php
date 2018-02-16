@@ -143,9 +143,16 @@ class CasesController extends SugarController {
         }
         //End Auto assign group
         
+        //print_r($this->bean);exit;
+        //Auto change status to assigned when assigned to user
+        if($this->bean->fetched_row['assigned_user_id'] == '' && $_POST['assigned_user_id'] != '') {
+            $this->bean->status = 'assigned';
+        }
+        //End of status change
+        
         //Set Status change datetime
-        if($this->bean->status != $_POST['status']) {
-            $this->bean->status_change_datetime_c = date('Y-m-d H:i:s');
+        if($this->bean->bean->fetched_row['status'] != $this->bean->status) {
+            $this->bean->status_change_datetime_c = $GLOBALS['timedate']->nowDb();
         }
         //End status change datetime set
         
